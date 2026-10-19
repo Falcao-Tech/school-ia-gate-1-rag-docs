@@ -1,0 +1,29 @@
+name: testes
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  testes:
+    # O template começa vermelho de propósito; os testes só rodam no repositório de quem faz o desafio.
+    if: github.repository != 'Falcao-Tech/school-ia-gate-1-rag-docs'
+    runs-on: ubuntu-latest
+    services:
+      neo4j:
+        image: neo4j:5.26
+        env:
+          NEO4J_AUTH: neo4j/noclaf-school
+        ports:
+          - 7687:7687
+        options: >-
+          --health-cmd "cypher-shell -u neo4j -p noclaf-school 'RETURN 1'"
+          --health-interval 10s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync
+      - name: Testes de unidade
+        run: uv run pytest
+      - name: Teste de integração com Neo4j
+        run: uv run pytest -m integration

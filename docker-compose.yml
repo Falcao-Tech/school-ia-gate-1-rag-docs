@@ -1,0 +1,13 @@
+services:
+  neo4j:
+    image: neo4j:5.26
+    ports:
+      - "7474:7474" # navegador: http://localhost:7474
+      - "7687:7687" # bolt, usado pelo código
+    environment:
+      NEO4J_AUTH: neo4j/noclaf-school
+    volumes:
+      - neo4j-data:/data
+
+volumes:
+  neo4j-data:
